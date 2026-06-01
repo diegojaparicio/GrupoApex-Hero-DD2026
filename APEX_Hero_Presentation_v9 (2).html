@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo APEX Americas — Hero MotoCorp Distribution Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0D1E3A; --navy-mid:#1A3057; --navy-light:#2A4A7F;
+    --navy-pale:#EAF0F8; --grey-dark:#2B2B2B; --grey-mid:#5A5A5A;
+    --grey-soft:#8A8A8A; --grey-light:#C8CDD6; --grey-pale:#F0F2F5;
+    --grey-rule:#DDE1E8; --white:#FFFFFF; --page-bg:#F6F7F9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#2A2A2A;font-family:"DM Sans",sans-serif;color:var(--grey-dark);overflow:hidden;}
+
+  #controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;z-index:9999;background:rgba(0,0,0,.7);padding:7px 18px;border-radius:40px;backdrop-filter:blur(8px);}
+  #controls button{background:none;border:1px solid rgba(255,255,255,.25);color:white;padding:5px 16px;border-radius:20px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:12px;transition:all .2s;}
+  #controls button:hover{background:var(--navy);border-color:var(--navy);}
+  #slide-counter{color:rgba(255,255,255,.4);font-size:11px;font-family:"DM Mono",monospace;min-width:46px;text-align:center;}
+
+  #viewport{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+  #slides-wrapper{width:1280px;height:720px;position:relative;transform-origin:center center;}
+  .slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease;overflow:hidden;background:var(--white);}
+  .slide.active{opacity:1;pointer-events:all;}
+  .slide-inner{width:100%;height:100%;display:flex;flex-direction:column;position:relative;}
+
+  .tag{display:inline-block;font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;border-radius:2px;}
+  .tag-navy{background:var(--navy);color:var(--white);}
+  .tag-ghost{border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.5);background:transparent;}
+
+  .pg{position:absolute;bottom:18px;right:52px;font-family:"DM Mono",monospace;font-size:9px;color:var(--grey-light);letter-spacing:.1em;}
+
+  .navy-bar{background:var(--navy);padding:20px 56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .navy-bar h2{font-family:"Cormorant Garamond",serif;font-size:25px;font-weight:600;color:var(--white);}
+
+  /* ── S1 COVER ── */
+  #s1{background:var(--white);}
+  #s1 .left{position:absolute;left:0;top:0;bottom:0;width:500px;background:var(--navy);display:flex;flex-direction:column;justify-content:center;padding:60px 56px;}
+  #s1 h1{font-family:"Cormorant Garamond",serif;font-size:60px;font-weight:700;color:white;line-height:1.02;letter-spacing:-.5px;margin-bottom:14px;}
+  #s1 h1 em{color:var(--grey-light);font-style:normal;}
+  #s1 .sub{font-size:13px;color:rgba(255,255,255,.45);font-weight:300;letter-spacing:.07em;margin-bottom:44px;line-height:1.6;}
+  #s1 .meta{display:flex;flex-direction:column;gap:10px;}
+  #s1 .mi label{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);text-transform:uppercase;display:block;margin-bottom:3px;}
+  #s1 .mi span{font-size:12px;color:rgba(255,255,255,.6);}
+  #s1 .right{position:absolute;right:0;top:0;bottom:0;left:500px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;padding:52px 48px;background:var(--page-bg);}
+  #s1 .logo-center{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+
+  /* ── S2 AGENDA ── */
+  #s2{background:var(--page-bg);}
+  #s2 .left{position:absolute;left:0;top:0;bottom:0;width:280px;background:var(--navy);padding:48px 38px;display:flex;flex-direction:column;justify-content:center;}
+  #s2 .left h2{font-family:"Cormorant Garamond",serif;font-size:32px;color:white;font-weight:600;line-height:1.15;margin-bottom:10px;margin-top:20px;}
+  #s2 .left p{font-size:11px;color:rgba(255,255,255,.38);line-height:1.7;}
+  #s2 .right{position:absolute;left:280px;top:0;right:0;bottom:0;padding:40px 52px;display:flex;flex-direction:column;justify-content:center;gap:5px;}
+  .ai{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:4px;background:var(--white);border:1px solid var(--grey-rule);transition:border-color .2s;}
+  .ai:hover{border-color:var(--navy);}
+  .ai .an{font-family:"DM Mono",monospace;font-size:11px;color:var(--navy);min-width:20px;font-weight:500;}
+  .ai .as{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.14em;color:var(--grey-light);text-transform:uppercase;min-width:52px;}
+  .ai .at{font-size:13px;font-weight:500;color:var(--grey-dark);flex:1;}
+  .ai .aico{width:26px;height:26px;border-radius:50%;background:var(--navy-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ico{width:13px;height:13px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ── S3 ESTRUCTURA ── */
+  #s3{background:var(--page-bg);}
+  #s3 .body{flex:1;padding:22px 52px 18px;display:flex;flex-direction:column;align-items:center;gap:0;}
+  .oc-apex{background:var(--navy);color:white;padding:11px 48px;border-radius:5px;text-align:center;}
+  .oc-apex .oct{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:700;letter-spacing:.04em;}
+  .oc-apex .ocs{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.15em;opacity:.5;text-transform:uppercase;margin-top:2px;}
+  .oc-vl{width:2px;height:16px;background:var(--grey-light);}
+  .oc-vl2{width:2px;height:14px;background:var(--grey-light);}
+  .oc-vl3{width:2px;height:10px;background:var(--grey-light);}
+  .oc-hbar{position:relative;width:860px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .oc-hbar::before{content:"";position:absolute;top:0;left:100px;right:100px;height:2px;background:var(--grey-light);}
+  .oc-branch{display:flex;flex-direction:column;align-items:center;width:400px;}
+  .oc-node{border-radius:5px;text-align:center;padding:10px 18px;width:220px;border:1px solid var(--grey-rule);}
+  .oc-node.mag{background:var(--navy-pale);border-top:3px solid var(--navy);}
+  .oc-node.apamo{background:var(--white);border-top:3px solid var(--navy-mid);}
+  .oc-node .oct{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:700;color:var(--navy);}
+  .oc-node .ocs{font-family:"DM Mono",monospace;font-size:7.5px;letter-spacing:.11em;color:var(--grey-soft);text-transform:uppercase;margin-top:2px;}
+  .oc-pills{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:380px;}
+  .ocp{font-size:8.5px;font-family:"DM Mono",monospace;padding:2px 7px;border-radius:2px;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--grey-rule);color:var(--grey-mid);background:var(--white);}
+  .ocp.n{border-color:rgba(13,30,58,.2);color:var(--navy);background:rgba(13,30,58,.04);}
+  .oc-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-top:14px;}
+  .osb{background:var(--white);border:1px solid var(--grey-rule);border-radius:5px;padding:10px 13px;}
+  .osb .osl{font-family:"DM Mono",monospace;font-size:7.5px;letter-spacing:.14em;color:var(--navy);text-transform:uppercase;margin-bottom:4px;}
+  .osb p{font-size:10.5px;color:var(--grey-mid);line-height:1.55;}
+
+  /* ── S4 FORTALEZAS ── */
+  #s4{background:var(--page-bg);}
+  #s4 .cards{flex:1;padding:14px 52px 24px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:11px;}
+  .fc{background:var(--white);border:1px solid var(--grey-rule);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;border-top:3px solid var(--grey-rule);position:relative;transition:border-top-color .2s;}
+  .fc:hover{border-top-color:var(--navy);}
+  .fc.feat{background:var(--navy);border:none;border-top:3px solid var(--navy-light);}
+  .fc .fn{position:absolute;top:11px;right:14px;font-family:"DM Mono",monospace;font-size:10px;color:var(--grey-light);}
+  .fc.feat .fn{color:rgba(255,255,255,.2);}
+  .fc .fi{width:24px;height:24px;border:1px solid var(--grey-rule);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;}
+  .fc.feat .fi{border-color:rgba(255,255,255,.2);}
+  .fc h3{font-size:12px;font-weight:600;color:var(--grey-dark);margin-bottom:5px;line-height:1.3;}
+  .fc.feat h3{color:white;}
+  .fc p{font-size:10px;color:var(--grey-mid);line-height:1.58;flex:1;}
+  .fc.feat p{color:rgba(255,255,255,.55);}
+  .fc .fm{margin-top:8px;font-family:"DM Mono",monospace;font-size:8px;color:var(--navy);border-top:1px solid var(--grey-rule);padding-top:6px;letter-spacing:.03em;}
+  .fc.feat .fm{color:rgba(255,255,255,.4);border-top-color:rgba(255,255,255,.12);}
+  .iw{width:12px;height:12px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .fc.feat .iw{stroke:rgba(255,255,255,.65);}
+
+  /* ── S5 INFRAESTRUCTURA ── */
+  #s5{background:var(--page-bg);}
+  #s5 .body{flex:1;display:grid;grid-template-columns:1fr 1fr;}
+  .loc-panel{padding:18px 28px 18px 52px;border-right:1px solid var(--grey-rule);}
+  .loc-panel h3{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.18em;color:var(--navy);text-transform:uppercase;margin-bottom:10px;}
+  .li{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--grey-rule);}
+  .li:last-child{border-bottom:none;}
+  .ld{width:6px;height:6px;border-radius:50%;background:var(--navy);flex-shrink:0;}
+  .ln{font-size:12px;font-weight:500;color:var(--grey-dark);flex:1;}
+  .lr{font-size:9px;color:var(--grey-soft);font-family:"DM Mono",monospace;}
+  .lb{font-size:8px;font-family:"DM Mono",monospace;padding:2px 7px;border-radius:2px;text-transform:uppercase;letter-spacing:.07em;background:var(--navy-pale);color:var(--navy);}
+  .exp-panel{padding:18px 32px 18px 24px;display:flex;flex-direction:column;gap:8px;}
+  .exp-panel h3{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.18em;color:var(--navy);text-transform:uppercase;margin-bottom:3px;}
+  .ep{background:var(--white);border:1px solid var(--grey-rule);border-radius:5px;padding:10px 13px;display:flex;gap:11px;align-items:flex-start;}
+  .epn{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:700;color:var(--navy);line-height:1;min-width:22px;}
+  .epb h4{font-size:11.5px;font-weight:600;color:var(--grey-dark);margin-bottom:2px;}
+  .epb p{font-size:9.5px;color:var(--grey-mid);line-height:1.5;}
+  .epb .ept{font-family:"DM Mono",monospace;font-size:8.5px;color:var(--navy);margin-top:3px;}
+  .nss{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:2px;}
+  .ns{background:var(--white);border:1px solid var(--grey-rule);border-radius:4px;padding:9px;text-align:center;}
+  .ns .nn{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:700;color:var(--navy);line-height:1;}
+  .ns .nl{font-family:"DM Mono",monospace;font-size:8px;color:var(--grey-light);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+
+  /* ── S6 ESTRATEGIA ── */
+  #s6{background:var(--page-bg);}
+  #s6 .body{flex:1;padding:14px 52px 24px;display:grid;grid-template-columns:1.1fr .9fr;gap:15px;}
+  .sc{display:flex;flex-direction:column;gap:8px;}
+  .cl{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--grey-soft);margin-bottom:1px;}
+  .sb{background:var(--white);border:1px solid var(--grey-rule);border-radius:5px;padding:12px 14px;position:relative;border-left:3px solid var(--navy);}
+  .sb .sbt{font-family:"DM Mono",monospace;font-size:8px;letter-spacing:.13em;color:var(--navy);text-transform:uppercase;margin-bottom:3px;display:block;}
+  .sb h4{font-size:11.5px;font-weight:600;color:var(--grey-dark);margin-bottom:3px;line-height:1.3;}
+  .sb p{font-size:10px;color:var(--grey-mid);line-height:1.55;}
+  .fn-col{display:flex;flex-direction:column;gap:0;}
+  .fnr{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--white);border:1px solid var(--grey-rule);border-bottom:none;}
+  .fnr:first-child{border-radius:5px 5px 0 0;}
+  .fnr:last-child{border-radius:0 0 5px 5px;border-bottom:1px solid var(--grey-rule);}
+  .fnn{font-family:"DM Mono",monospace;font-size:13px;color:var(--navy);min-width:20px;font-weight:500;}
+  .fnl{font-size:11px;color:var(--grey-dark);font-weight:500;flex:1;}
+  .fno{font-size:9px;color:var(--grey-soft);font-family:"DM Mono",monospace;}
+  .chg{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .chc{background:var(--white);border:1px solid var(--grey-rule);border-radius:4px;padding:9px 11px;}
+  .chc .chl{font-size:11px;font-weight:500;color:var(--grey-dark);}
+  .chc .chn{font-size:9px;color:var(--grey-soft);margin-top:2px;font-family:"DM Mono",monospace;}
+  .ic2{width:12px;height:12px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ── S7 CLOSE ── */
+  #s7{background:var(--white);}
+  #s7 .left{position:absolute;left:0;top:0;bottom:0;width:480px;background:var(--navy);display:flex;flex-direction:column;justify-content:center;padding:60px 52px;}
+  #s7 h2{font-family:"Cormorant Garamond",serif;font-size:48px;color:white;font-weight:700;line-height:1.06;margin-bottom:14px;}
+  #s7 h2 em{color:var(--grey-light);font-style:normal;}
+  #s7 .left p{font-size:12px;color:rgba(255,255,255,.42);line-height:1.75;}
+  #s7 .right{position:absolute;left:480px;top:0;right:0;bottom:0;background:var(--page-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:48px 44px;}
+  #s7 .right p{font-size:12px;color:var(--grey-dark);line-height:1.7;text-align:center;margin-bottom:8px;}
+  .srow{display:flex;gap:0;border:1px solid var(--grey-rule);border-radius:6px;overflow:hidden;width:100%;}
+  .sbox{flex:1;padding:16px 10px;text-align:center;border-right:1px solid var(--grey-rule);background:var(--white);}
+  .sbox:last-child{border-right:none;}
+  .sbox .sbn{font-family:"Cormorant Garamond",serif;font-size:38px;font-weight:700;color:var(--navy);line-height:1;}
+  .sbox .sbn em{color:var(--grey-soft);font-style:normal;font-size:22px;}
+  .sbox label{font-family:"DM Mono",monospace;font-size:7.5px;letter-spacing:.15em;color:var(--grey-soft);text-transform:uppercase;display:block;margin-top:4px;}
+  #s7 .bottom{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:"DM Mono",monospace;font-size:9px;color:var(--grey-light);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="slides-wrapper">
+
+<!-- ═══ S1 COVER ═══ -->
+<div class="slide active" id="s1">
+  <div class="left">
+    
+    <div style="height:32px;"></div>
+    <h1>Propuesta de<br><em>Distribución</em></h1>
+    <p class="sub">Hero MotoCorp &nbsp;·&nbsp; Venezuela, Centro América &amp; el Caribe</p>
+    <div class="meta">
+      <div class="mi"><label>Mercados objetivo</label><span>Venezuela · Centro América · Caribe</span></div>
+      <div class="mi"><label>Fecha</label><span>Junio 2026</span></div>
+      <div class="mi"><label>Clasificación</label><span>Confidencial</span></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="logo-center"></div>
+  </div>
+  <span class="pg">01 / 07</span>
+</div>
+
+<!-- ═══ S2 AGENDA ═══ -->
+<div class="slide" id="s2">
+  <div class="left">
+    
+    <h2>Estructura de la Propuesta</h2>
+    <div style="width:28px;height:2px;background:var(--grey-light);margin:10px 0;"></div>
+    <p>Esta propuesta cubre <strong style="color:rgba(255,255,255,.65);">parcialmente</strong> los módulos solicitados por Hero MotoCorp International para la evaluación de un distribuidor exclusivo. La información financiera detallada, proyecciones de inventario y market share serán presentadas en la siguiente fase del proceso.</p>
+  </div>
+  <div class="right" style="position:absolute;left:280px;top:0;right:0;bottom:0;padding:28px 48px;display:flex;flex-direction:column;justify-content:center;gap:4px;">
+    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);margin-bottom:2px;padding:0 2px;">Etapa 1 — Presentado</div>
+    <div class="ai"><span class="an">01</span><span class="as" style="color:var(--navy);">Etapa 1</span><span class="at">Negocios Existentes &amp; Estructura de la Propiedad</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div>
+    <div class="ai"><span class="an">02</span><span class="as" style="color:var(--navy);">Etapa 1</span><span class="at">Estructura de la Organización</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><rect x="2" y="18" width="6" height="4" rx="1"/><rect x="16" y="18" width="6" height="4" rx="1"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="5" y1="18" x2="5" y2="14"/><line x1="19" y1="18" x2="19" y2="14"/><line x1="5" y1="14" x2="19" y2="14"/></svg></div></div>
+    <div class="ai"><span class="an">03</span><span class="as" style="color:var(--navy);">Etapa 1</span><span class="at">Fortalezas Clave &amp; Propuesta de Valor</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div></div>
+    <div class="ai" style="opacity:.45;"><span class="an">04</span><span class="as" style="">Etapa 1</span><span class="at">Soportes Financieros &amp; Proyección de la Inversión <span style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;">— Fase siguiente</span></span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div></div>
+    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--grey-soft);margin:4px 0 2px;padding:0 2px;">Etapa 2 — Fase siguiente</div>
+    <div class="ai" style="opacity:.45;"><span class="an">05</span><span class="as" style="">Etapa 2</span><span class="at">Entendimiento de Mercado &amp; Análisis Competitivo <span style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;">— Fase siguiente</span></span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div></div>
+    <div class="ai" style="opacity:.45;"><span class="an">06</span><span class="as" style="">Etapa 2</span><span class="at">Regulaciones Gubernamentales &amp; Entorno Operativo <span style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;">— Fase siguiente</span></span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div>
+    <div class="ai" style="opacity:.45;"><span class="an">07</span><span class="as" style="">Etapa 2</span><span class="at">Plantas Ensambladoras &amp; Operaciones de Competidores <span style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;">— Fase siguiente</span></span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div></div>
+    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);margin:4px 0 2px;padding:0 2px;">Etapa 3 — Presentado parcialmente</div>
+    <div class="ai"><span class="an">08</span><span class="as" style="color:var(--navy);">Etapa 3</span><span class="at">Infraestructura &amp; Red de Distribución</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div></div>
+    <div class="ai"><span class="an">09</span><span class="as" style="color:var(--navy);">Etapa 3</span><span class="at">Estrategia de Mercadeo &amp; Distribución</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg></div></div>
+    <div class="ai" style="opacity:.45;"><span class="an">10</span><span class="as" style="">Etapa 3</span><span class="at">Volúmenes de Inventario &amp; Proyección de Market Share <span style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;">— Fase siguiente</span></span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+    <div class="ai"><span class="an">11</span><span class="as" style="color:var(--navy);">Etapa 3</span><span class="at">Propuesta de Estructura Organizacional</span><div class="aico"><svg class="ico" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><rect x="2" y="18" width="6" height="4" rx="1"/><rect x="16" y="18" width="6" height="4" rx="1"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="5" y1="18" x2="5" y2="14"/><line x1="19" y1="18" x2="19" y2="14"/><line x1="5" y1="14" x2="19" y2="14"/></svg></div></div>
+  </div>
+  <span class="pg">02 / 07</span>
+</div>
+
+<!-- ═══ S3 ESTRUCTURA ═══ -->
+<div class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="navy-bar">
+      <div><div class="tag tag-ghost" style="margin-bottom:5px;">Etapa 1 · Negocios Existentes</div><h2>Estructura Corporativa</h2></div>
+      
+    </div>
+    <div class="body" style="flex:1;padding:20px 52px 16px;display:flex;flex-direction:column;align-items:center;gap:0;">
+      <div class="oc-apex"><div class="oct">GRUPO APEX AMERICAS</div><div class="ocs">Joint Venture 50 / 50 · MAG &amp; APAMO · Creada para gestionar el mandato en Venezuela, Centro América &amp; el Caribe</div></div>
+      <div class="oc-vl"></div>
+      <div class="oc-hbar">
+        <div class="oc-branch">
+          <div class="oc-vl2"></div>
+          <div class="oc-node mag"><div class="oct">MAG</div><div class="ocs">Maldonado Automotive Group</div></div>
+          <div class="oc-vl3"></div>
+          <div class="oc-pills">
+            <span class="ocp n">Toyota</span><span class="ocp n">Ford</span><span class="ocp n">Stellantis</span>
+            <span class="ocp n">Chrysler</span><span class="ocp n">Chevrolet</span><span class="ocp n">General Motors</span>
+            <span class="ocp n">Navistar</span><span class="ocp n">Suzuki</span><span class="ocp n">Jeep</span>
+            <span class="ocp n">Dodge</span><span class="ocp n">Mercedes-Benz</span><span class="ocp n">Isuzu</span>
+          </div>
+        </div>
+        <div class="oc-branch">
+          <div class="oc-vl2"></div>
+          <div class="oc-node apamo"><div class="oct">APAMO</div><div class="ocs">Aparicio Moscoso Group</div></div>
+          <div class="oc-vl3"></div>
+          <div class="oc-pills">
+            <span class="ocp">Textiles</span><span class="ocp">Químicos</span><span class="ocp">Distribución</span>
+            <span class="ocp">Centro América</span><span class="ocp">Frameworks LATAM</span>
+          </div>
+        </div>
+      </div>
+      <div class="oc-sum">
+        <div class="osb"><div class="osl">MAG · Operaciones Venezuela</div><p>Más de cinco décadas gestionando 12 franquicias de los principales fabricantes globales. Red de 9 entidades activas con infraestructura certificada OEM lista para activar el mandato Hero desde el día uno.</p></div>
+        <div class="osb"><div class="osl">APAMO · Excelencia en Distribución</div><p>Experiencia operativa en distribución de múltiples verticales a través de Centro América. Conocimiento profundo de los marcos geopolíticos y regulatorios complejos de la región latinoamericana.</p></div>
+        <div class="osb"><div class="osl">APEX · Joint Venture 50/50</div><p>Entidad constituida al 50% MAG y 50% APAMO para gestionar la distribución exclusiva Hero MotoCorp en Venezuela, Centro América y el Caribe — un solo grupo integrado con capacidad de ejecución regional desde el día uno.</p></div>
+      </div>
+    </div>
+    <span class="pg">03 / 07</span>
+  </div>
+</div>
+
+<!-- ═══ S4 FORTALEZAS ═══ -->
+<div class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="navy-bar">
+      <div><div class="tag tag-ghost" style="margin-bottom:5px;">Etapa 1 · Fortalezas Clave</div><h2>Propuesta de Valor · Por Qué Grupo APEX</h2></div>
+      
+    </div>
+    <div class="cards">
+
+      <div class="fc feat">
+        <div class="fn">01</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Operadores Venezolanos con Dominio Nacional</h3>
+        <p>Más de 50 años operando en todos los estados de Venezuela. Conocemos el tejido comercial, fiscal y legal de cada región como operadores nativos — no como extranjeros adaptando modelos foráneos. Una ventaja que no se compra ni se replica en el corto plazo.</p>
+        <div class="fm">Presencia probada en todos los estados · Red comercial nacional</div>
+      </div>
+
+      <div class="fc">
+        <div class="fn">02</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Excelencia Operativa en Entornos Complejos</h3>
+        <p>Operamos sin interrupción a través de ciclos económicos, marcos regulatorios cambiantes y contextos geopolíticos desafiantes en Venezuela y Centro América — incluyendo la entrega puntual de productos de alta sensibilidad como insumos médicos hospitalarios. Nuestra capacidad de ejecución en entornos adversos es un activo diferenciador.</p>
+        <div class="fm">Continuidad operativa · Entrega puntual · Logística crítica demostrada</div>
+      </div>
+
+      <div class="fc">
+        <div class="fn">03</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <h3>Cumplimiento OEM con los Fabricantes más Exigentes del Mundo</h3>
+        <p>Durante más de 50 años, MAG ha cumplido sin excepción los estándares de reporte, auditoría, calidad y volúmenes de Toyota, Ford, Stellantis, Chrysler, Chevrolet, GM, Navistar, Suzuki, Jeep, Dodge, Mercedes-Benz e Isuzu. Esto habla por sí solo de la seriedad del grupo para sostener el mandato Hero.</p>
+        <div class="fm">12 franquicias OEM · 50+ años sin interrupción · Auditorías superadas</div>
+      </div>
+
+      <div class="fc">
+        <div class="fn">04</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Solvencia Financiera</h3>
+        <p>APEX cuenta con los estados financieros que respaldan cómodamente este mandato y su crecimiento progresivo con nuestros socios. La capacidad de sostener 12 franquicias de fabricantes globales durante décadas es la prueba más directa de la solidez financiera del grupo para comprometerse con Hero a largo plazo.</p>
+        <div class="fm">Estados financieros disponibles · Crecimiento progresivo con socios</div>
+      </div>
+
+      <div class="fc">
+        <div class="fn">05</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Infraestructura de Financiamiento</h3>
+        <p>Contamos con un acuerdo vigente con <strong>Cashea</strong> que nos permite operar con financiamiento al cliente desde el día uno. En paralelo, construiremos <strong>Avanza</strong> — nuestra plataforma propia — con tasas más competitivas, plazos más flexibles y aprobaciones más rápidas que el sistema bancario, potenciando la accesibilidad del producto Hero sin depender de terceros.</p>
+        <div class="fm">Cashea · Operativo desde día 1 &nbsp;·&nbsp; Avanza · Plataforma propia en construcción</div>
+      </div>
+
+      <div class="fc">
+        <div class="fn">06</div>
+        <div class="fi"><svg class="iw" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Red de Inversionistas Locales de Alto Calibre</h3>
+        <p>Aportamos acceso a empresarios venezolanos reconocidos que toman el mandato de construir la red regional bajo APEX. Esta red tiene un valor monetario real. Adicionalmente, permite que la inversión de Hero sea más liviana y hace posible algo inusual en Venezuela: <strong>concesionarios de marca única</strong> — un estándar que el mercado local no ofrece hoy.</p>
+        <div class="fm">Red activa · Inversión Hero más eficiente · Single-brand dealers en Venezuela</div>
+      </div>
+
+    </div>
+    <span class="pg">04 / 07</span>
+  </div>
+</div>
+
+<!-- ═══ S5 INFRAESTRUCTURA ═══ -->
+<div class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="navy-bar">
+      <div><div class="tag tag-ghost" style="margin-bottom:5px;">Etapa 3 · Infraestructura</div><h2>Red de Distribución · Venezuela</h2></div>
+      <div style="display:flex;gap:26px;align-items:center;">
+        <div style="text-align:right;"><div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:white;line-height:1;">9</div><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:rgba(255,255,255,.35);text-transform:uppercase;">Ubicaciones Activas</div></div>
+        <div style="text-align:right;"><div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:white;line-height:1;">30<span style="font-size:17px;color:var(--grey-light);">+</span></div><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:rgba(255,255,255,.35);text-transform:uppercase;">Objetivo Año 3 · Venezuela</div></div>
+        
+      </div>
+    </div>
+    <div class="body" style="flex:1;display:grid;grid-template-columns:1fr 1.4fr;">
+      <div class="loc-panel">
+        <h3>Base MAG — 9 Puntos de Activación Inmediata</h3>
+        <div class="li"><div class="ld"></div><span class="ln">Maracay, Aragua (HQ)</span><span class="lr">Toyota · Ford · Chrysler</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Maracay Norte</span><span class="lr">Servicio &amp; Repuestos</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Valencia, Carabobo</span><span class="lr">Multi-marca</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Caracas, Área Metropolitana</span><span class="lr">Ventas &amp; Post-venta</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">San Cristóbal, Táchira</span><span class="lr">Frontera Colombia</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Barquisimeto, Lara</span><span class="lr">Centro-Occidental</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Maturín, Monagas</span><span class="lr">Zona Petrolífera</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Maracaibo, Zulia</span><span class="lr">Occidente</span><span class="lb">Activo</span></div>
+        <div class="li"><div class="ld"></div><span class="ln">Puerto Ordaz, Bolívar</span><span class="lr">Guayana Industrial</span><span class="lb">Activo</span></div>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--navy-pale);border-radius:4px;border-left:3px solid var(--navy);">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--navy);text-transform:uppercase;margin-bottom:3px;">Referencia Competitiva</div>
+          <div style="font-size:10px;color:var(--grey-mid);line-height:1.5;">Bera Motorcycles opera <strong style="color:var(--grey-dark);">183 puntos</strong> en 22 estados tras 10+ años. APEX entra con una estrategia de tres canales simultáneos para alcanzar escala competitiva en menor tiempo.</div>
+        </div>
+      </div>
+      <div class="exp-panel" style="padding:18px 24px 18px 20px;display:flex;flex-direction:column;gap:7px;">
+        <h3>Plan de Expansión — Tres Canales Simultáneos</h3>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px;">
+          <div style="background:var(--white);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Canal A</div>
+            <div style="font-size:11px;font-weight:600;color:var(--grey-dark);">Salas de Venta Propias</div>
+            <div style="font-size:9px;color:var(--grey-soft);margin-top:3px;">MAG + inversionistas exclusivos Hero</div>
+          </div>
+          <div style="background:var(--white);border:1px solid var(--grey-rule);border-top:2px solid var(--navy-mid);border-radius:4px;padding:8px 10px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Canal B</div>
+            <div style="font-size:11px;font-weight:600;color:var(--grey-dark);">Dealers Multimarca</div>
+            <div style="font-size:9px;color:var(--grey-soft);margin-top:3px;">Concesionarios establecidos que añaden Hero</div>
+          </div>
+          <div style="background:var(--white);border:1px solid var(--grey-rule);border-top:2px solid var(--grey-soft);border-radius:4px;padding:8px 10px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Canal C</div>
+            <div style="font-size:11px;font-weight:600;color:var(--grey-dark);">Cadenas Retail Multidepartamento</div>
+            <div style="font-size:9px;color:var(--grey-soft);margin-top:3px;">Siman, Novey, Semaco y equivalentes venezolanos</div>
+          </div>
+        </div>
+
+        <div class="ep"><div class="epn">1</div><div class="epb"><h4>Año 1 · Canal A activo — Base propia (9 → 20 puntos)</h4><p>Activación de los 9 puntos MAG como salas Hero desde día 1. Reclutamiento inmediato de 6–8 inversionistas para salas exclusivas Hero en Caracas, Valencia, Barquisimeto, Maturín, Maracaibo y San Cristóbal. Inicio paralelo del Canal C con 5 cadenas retail multidepartamento (línea blanca, hogar, herramientas) en estados clave — replicando el modelo de distribución masiva usado por marcas chinas en CA.</p><div class="ept">Meta Año 1: ~20 puntos activos — Canal A + primeros retailers Canal C</div></div></div>
+
+        <div class="ep"><div class="epn">2</div><div class="epb"><h4>Año 2 · Canal B activo — Red mixta (20 → 60 puntos)</h4><p>Incorporación de concesionarios multimarca establecidos (Canal B) en estados con menor presencia propia. Escala del Canal C a 20+ cadenas retail multidepartamento y puntos equivalentes — grandes superficies del tipo Siman (El Salvador), Novey (Panamá), Semaco (Guatemala) y sus equivalentes venezolanos. Este canal es el que permitió a Bera alcanzar 183 ubicaciones sin construir infraestructura propia. Expansión a 18+ estados.</p><div class="ept">Meta Año 2: ~60 puntos — presencia en 18 de 23 estados</div></div></div>
+
+        <div class="ep"><div class="epn">3</div><div class="epb"><h4>Año 3 · Cobertura nacional — Los 23 estados (60 → 120+ puntos)</h4><p>Red consolidada en todos los estados. Canal C como principal motor de volumen: grandes superficies comerciales y cadenas multidepartamento que venden desde línea blanca hasta motocicletas — el mismo modelo que Bera replicó en 22 estados venezolanos. Objetivo: superar los 100 puntos de contacto y posicionar a Hero como alternativa real a Bera en infraestructura de red.</p><div class="ept">Meta Año 3: 120+ puntos · 23 estados · Los tres canales operativos</div></div></div>
+
+        <div class="nss">
+          <div class="ns"><div class="nn">20</div><div class="nl">Año 1</div></div>
+          <div class="ns"><div class="nn">60</div><div class="nl">Año 2</div></div>
+          <div class="ns"><div class="nn">120+</div><div class="nl">Año 3</div></div>
+        </div>
+      </div>
+    </div>
+    <span class="pg">05 / 07</span>
+  </div>
+</div>
+
+<!-- ═══ S6 ESTRATEGIA ═══ -->
+<div class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="navy-bar" style="align-items:flex-end;">
+      <div><div class="tag tag-ghost" style="margin-bottom:5px;">Etapa 3 · Estrategia</div><h2>Mercadeo &amp; Distribución</h2></div>
+      <p style="font-size:11px;color:rgba(255,255,255,.35);max-width:320px;text-align:right;line-height:1.55;">APEX combina la garantía más alta del segmento, beneficios SKD/CKD para el canal y una red de tres canales simultáneos — para alcanzar la escala de Bera en 3 años en lugar de 10.</p>
+    </div>
+    <div class="body" style="flex:1;padding:12px 52px 20px;display:grid;grid-template-columns:1.05fr .95fr;gap:14px;">
+      <div class="sc">
+        <div class="cl">Pilares Estratégicos &amp; Ventajas Competitivas</div>
+
+        <div class="sb">
+          <span class="sbt">Posicionamiento · Superior al Chino, Accesible vs. Japonés</span>
+          <h4>Calidad India con Red de Soporte que el Chino No Puede Igualar</h4>
+          <p>Hero supera a Bera y Empire Keeway en calidad, garantía e imagen, y compite por debajo de Honda/Yamaha en precio. La clave diferencial es la infraestructura: nuestra red de inversionistas construye una cobertura de repuestos y servicio técnico que el comprador venezolano no encuentra en las marcas chinas — el mismo argumento que consolidó a Hero en Centro América.</p>
+        </div>
+
+        <div class="sb">
+          <span class="sbt">Garantía Hero · El Estándar más Alto del Segmento</span>
+          <h4>4 Años o 50,000 km — vs. 1–2 Años y 12–25k km de la Competencia</h4>
+          <p>La garantía Hero es 2 a 4 veces superior a cualquier competidor en el segmento. En el canal B2B — flotas, delivery, cooperativas — el costo total de propiedad es el argumento de compra; una garantía de 4 años elimina la principal objeción. En retail individual, es el cierre de venta más poderoso contra el producto chino.</p>
+        </div>
+
+        <div class="sb">
+          <span class="sbt">Ventaja SKD/CKD · Beneficio Trasladado al Canal</span>
+          <h4>Ensamblaje Local como Incentivo Diferenciador para el Retailer</h4>
+          <p>Como parte del plan de expansión, APEX trasladará el beneficio del esquema SKD/CKD de Hero a los retailers de la red — reduciendo costos de inventario, mejorando márgenes del distribuidor y haciendo el producto más competitivo en precio final. Este incentivo no existe en ningún competidor chino y posiciona a Hero como la marca con mejor economía de canal en Venezuela.</p>
+        </div>
+
+        <div class="sb">
+          <span class="sbt">Red de Inversionistas · Crecimiento Local Sin Capital Centralizado</span>
+          <h4>Empresarios Venezolanos que Construyen la Red Bajo APEX</h4>
+          <p>Incorporamos empresarios venezolanos reconocidos como distribuidores inversores bajo APEX. Cada uno desarrolla su zona con soporte de mandato, inventario y capacitación Hero. Esta red se activa desde el día uno, hace la inversión de Hero más liviana y permite establecer concesionarios de marca única — algo inusual y diferenciador en el mercado venezolano actual donde el estándar es la multimarca.</p>
+        </div>
+
+        <div class="sb">
+          <span class="sbt">Infraestructura de Financiamiento · Cashea + Avanza</span>
+          <h4>El Producto Hero más Accesible desde el Día Uno</h4>
+          <p>Contamos con un acuerdo vigente con <strong>Cashea</strong> que nos permite ofrecer financiamiento al cliente final desde el día uno — sin esperar a la banca tradicional. En paralelo, construimos <strong>Avanza</strong>, nuestra plataforma propia de crédito, con tasas más competitivas, plazos más flexibles y aprobaciones más rápidas. Juntos, estos dos instrumentos eliminan la principal barrera de compra y potencian el alcance del producto Hero en todos los segmentos del mercado.</p>
+        </div>
+      </div>
+
+      <div class="sc">
+        <div class="cl">Secuencia de Ejecución</div>
+        <div class="fn-col">
+          <div class="fnr"><div class="fnn">01</div><div class="fnl">Mandato Exclusivo Hero · Puntos de Venta APEX</div><div class="fno">Red propia activa desde día 1</div></div>
+          <div class="fnr"><div class="fnn">02</div><div class="fnl">Depto. B2B · Flotas &amp; Delivery</div><div class="fno">Pilar principal · ingresos desde mes 1</div></div>
+          <div class="fnr"><div class="fnn">03</div><div class="fnl">Reclutamiento · Dealers Unimarca Hero</div><div class="fno">Red exclusiva Hero en estados clave</div></div>
+          <div class="fnr"><div class="fnn">04</div><div class="fnl">Red Multimarca &amp; Retailers · Canal C</div><div class="fno">Grandes superficies · Cadenas multidepartamento</div></div>
+        </div>
+
+        <div class="cl" style="margin-top:8px;">Canales de Distribución</div>
+        <div class="chg">
+          <div class="chc">
+            <div class="chl">Sala de Ventas Propias</div>
+            <div class="chn">MAG + inversionistas exclusivos Hero</div>
+          </div>
+          <div class="chc">
+            <div class="chl">Dealers Multimarca</div>
+            <div class="chn">Concesionarios que añaden Hero a su portafolio</div>
+          </div>
+          <div class="chc">
+            <div class="chl">Canal B2B · Flotas</div>
+            <div class="chn">Delivery · Transporte · Corporativo</div>
+          </div>
+          <div class="chc">
+            <div class="chl">Ventas en Línea</div>
+            <div class="chn">E-commerce · Entrega a domicilio</div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;padding:9px 12px;background:var(--white);border:1px solid var(--grey-rule);border-left:3px solid var(--navy);border-radius:4px;">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--navy);text-transform:uppercase;margin-bottom:3px;">Benchmark · Bera Motorcycles (10 años)</div>
+          <div style="font-size:10px;color:var(--grey-mid);line-height:1.5;">183 puntos en 22 estados usando el modelo Canal B + Canal C (grandes superficies y cadenas multidepartamento). APEX entra con los tres canales simultáneos — incluyendo B2B y digital que Bera no tiene estructurados — para alcanzar escala competitiva en 3 años en lugar de 10.</div>
+        </div>
+      </div>
+    </div>
+    <span class="pg">06 / 07</span>
+  </div>
+</div>
+
+
+<!-- ═══ S_ORG: PROPUESTA ESTRUCTURA ORGANIZACIONAL ═══ -->
+<div class="slide" id="sorg">
+  <div class="slide-inner">
+    <div class="navy-bar">
+      <div>
+        <div class="tag tag-ghost" style="margin-bottom:5px;">Etapa 3 · Propuesta de Estructura Organizacional</div>
+        <h2>Grupo APEX Americas — Organigrama Propuesto</h2>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4);text-align:right;max-width:280px;line-height:1.5;">Estructura diseñada para la gestión del mandato Hero MotoCorp en Venezuela</div>
+    </div>
+    <div style="flex:1;padding:16px 40px 18px;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+
+      <!-- BOARD -->
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+        <div style="background:var(--grey-pale);border:1px solid var(--grey-rule);border-radius:4px;padding:6px 20px;text-align:center;">
+          <div style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--grey-soft);text-transform:uppercase;">Junta Directiva</div>
+          <div style="font-size:11px;font-weight:600;color:var(--grey-dark);margin-top:2px;">Jhonny Maldonado &nbsp;·&nbsp; Diego Aparicio</div>
+          <div style="font-size:9px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">MAG (50%) &nbsp;·&nbsp; APAMO (50%)</div>
+        </div>
+      </div>
+      <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+
+      <!-- CO-PRESIDENTS -->
+      <div style="display:flex;gap:12px;align-items:flex-start;position:relative;">
+        <div style="position:absolute;top:0;left:100px;right:100px;height:2px;background:var(--grey-light);"></div>
+        <!-- Jhonny -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:200px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy);color:white;border-radius:5px;padding:8px 14px;text-align:center;width:100%;">
+            <div style="font-size:11px;font-weight:600;">Jhonny Maldonado</div>
+            <div style="font-family:'DM Mono',monospace;font-size:7.5px;opacity:.6;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;">Co-Presidente · Operaciones VZ</div>
+          </div>
+        </div>
+        <!-- Diego -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:200px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy);color:white;border-radius:5px;padding:8px 14px;text-align:center;width:100%;">
+            <div style="font-size:11px;font-weight:600;">Diego Aparicio</div>
+            <div style="font-family:'DM Mono',monospace;font-size:7.5px;opacity:.6;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;">Co-Presidente · Estrategia &amp; Finanzas</div>
+          </div>
+        </div>
+      </div>
+      <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+
+      <!-- DEPARTMENTS ROW -->
+      <div style="display:flex;gap:8px;align-items:flex-start;position:relative;width:100%;justify-content:center;">
+        <div style="position:absolute;top:0;left:80px;right:80px;height:2px;background:var(--grey-light);"></div>
+
+        <!-- Dept 1: Ventas B2B -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:162px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy-pale);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;width:100%;">
+            <div style="font-size:10px;font-weight:600;color:var(--navy);">Dirección de Ventas B2B</div>
+            <div style="font-size:8.5px;color:var(--grey-soft);margin-top:2px;font-family:'DM Mono',monospace;">Flotas · Delivery · Corporativo</div>
+          </div>
+        </div>
+
+        <!-- Dept 2: Red de Distribución -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:162px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy-pale);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;width:100%;">
+            <div style="font-size:10px;font-weight:600;color:var(--navy);">Desarrollo de Red</div>
+            <div style="font-size:8.5px;color:var(--grey-soft);margin-top:2px;font-family:'DM Mono',monospace;">Dealers · Retailers · Inversores</div>
+          </div>
+        </div>
+
+        <!-- Dept 3: Marca & Marketing -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:162px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy-pale);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;width:100%;">
+            <div style="font-size:10px;font-weight:600;color:var(--navy);">Marca &amp; Mercadeo</div>
+            <div style="font-size:8.5px;color:var(--grey-soft);margin-top:2px;font-family:'DM Mono',monospace;">Hero Brand · Digital · Campañas</div>
+          </div>
+        </div>
+
+        <!-- Dept 4: Repuestos & Servicio -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:162px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy-pale);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;width:100%;">
+            <div style="font-size:10px;font-weight:600;color:var(--navy);">Repuestos &amp; Postventa</div>
+            <div style="font-size:8.5px;color:var(--grey-soft);margin-top:2px;font-family:'DM Mono',monospace;">Parts · Garantías · Servicio Técnico</div>
+          </div>
+        </div>
+
+        <!-- Dept 5: Finanzas -->
+        <div style="display:flex;flex-direction:column;align-items:center;width:162px;">
+          <div style="width:2px;height:14px;background:var(--grey-light);"></div>
+          <div style="background:var(--navy-pale);border:1px solid var(--grey-rule);border-top:2px solid var(--navy);border-radius:4px;padding:8px 10px;text-align:center;width:100%;">
+            <div style="font-size:10px;font-weight:600;color:var(--navy);">Finanzas &amp; Financiamiento</div>
+            <div style="font-size:8.5px;color:var(--grey-soft);margin-top:2px;font-family:'DM Mono',monospace;">Cashea · Avanza · Operaciones</div>
+          </div>
+        </div>
+
+      </div>
+      <div style="width:2px;height:12px;background:var(--grey-light);"></div>
+
+      <!-- IN-COUNTRY MANAGERS ROW -->
+      <!-- CITY MANAGERS -->
+      <div style="width:100%;background:var(--white);border:1px solid var(--grey-rule);border-radius:5px;padding:9px 14px;">
+        <div style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:var(--navy);text-transform:uppercase;margin-bottom:7px;text-align:center;">Gerentes de Ciudad — In-Country Managers</div>
+        <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px;">
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Caracas</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Dtto. Capital</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Maracay</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Aragua · HQ</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Valencia</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Carabobo</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Maracaibo</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Zulia</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Barquisimeto</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Lara</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">San Cristóbal</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Táchira</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Maturín</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Monagas</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--page-bg);border-radius:3px;border:1px solid var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-dark);">Puerto Ordaz</div>
+            <div style="font-size:7.5px;color:var(--grey-soft);font-family:'DM Mono',monospace;margin-top:1px;">Bolívar</div>
+          </div>
+          <div style="text-align:center;padding:5px 3px;background:var(--grey-pale);border-radius:3px;border:1px dashed var(--grey-rule);">
+            <div style="font-size:9px;font-weight:600;color:var(--grey-soft);">+ Expansión</div>
+            <div style="font-size:7.5px;color:var(--grey-light);font-family:'DM Mono',monospace;margin-top:1px;">Año 2–3</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR -->
+      <div style="width:2px;height:10px;background:var(--grey-light);"></div>
+
+      <!-- EQUIPO OPERATIVO POR CIUDAD -->
+      <div style="width:100%;background:var(--white);border:1px solid var(--grey-rule);border-radius:5px;padding:9px 14px;">
+        <div style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:var(--grey-soft);text-transform:uppercase;margin-bottom:7px;text-align:center;">Equipo Operativo por Ciudad — 2 a 3 personas en fase inicial, escala con volumen</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--page-bg);border-radius:4px;border:1px solid var(--grey-rule);border-left:3px solid var(--navy);">
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--grey-dark);">Ejecutivo de Ventas B2B</div>
+              <div style="font-size:9px;color:var(--grey-mid);line-height:1.5;margin-top:3px;">Cierre de cuentas de flotas, cooperativas de delivery y clientes corporativos. Principal generador de volumen en fase inicial. Reporta al Gerente de Ciudad.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--page-bg);border-radius:4px;border:1px solid var(--grey-rule);border-left:3px solid var(--navy-mid);">
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--grey-dark);">Ejecutivo de Ventas Retail &amp; Red</div>
+              <div style="font-size:9px;color:var(--grey-mid);line-height:1.5;margin-top:3px;">Gestión de dealers unimarca, concesionarios multimarca y cadenas retail multidepartamento en su ciudad. Responsable del crecimiento del Canal B y Canal C localmente.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--page-bg);border-radius:4px;border:1px solid var(--grey-rule);border-left:3px solid var(--grey-light);">
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--grey-dark);">Técnico de Servicio &amp; Garantías</div>
+              <div style="font-size:9px;color:var(--grey-mid);line-height:1.5;margin-top:3px;">Gestión de postventa, garantías Hero y soporte técnico a la red de dealers y clientes finales. Rol crítico dado que la garantía de 4 años es argumento central de venta.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <span class="pg">07 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S7 CLOSE ═══ -->
+<div class="slide" id="s7">
+  <div class="left">
+    
+    <div style="height:28px;"></div>
+    <h2>Un Mandato.<br><em>Un Mercado Abierto.</em><br>El Momento Correcto.</h2>
+    <p>Hero MotoCorp no tiene presencia en Venezuela. Grupo APEX tiene la infraestructura OEM probada, la solvencia financiera y el acceso a una red de empresarios locales para construir la distribución desde el día uno, en el único gran mercado latinoamericano donde Hero aún no está.</p>
+  </div>
+  <div class="right">
+    <p>Una trayectoria de más de 50 años operando con 12 franquicias de los fabricantes más exigentes del mundo es el respaldo más sólido que un distribuidor puede presentar.</p>
+    <div class="srow">
+      <div class="sbox"><div class="sbn">50<em>+</em></div><label>Años Exp. OEM Venezuela</label></div>
+      <div class="sbox"><div class="sbn">9</div><label>Puntos Activables Día 1</label></div>
+      <div class="sbox"><div class="sbn">12</div><label>Franquicias OEM Activas</label></div>
+      <div class="sbox"><div class="sbn">120<em>+</em></div><label>Puntos Objetivo Año 3</label></div>
+    </div>
+  </div>
+  <div class="bottom">Grupo APEX Americas &nbsp;·&nbsp; Confidencial &nbsp;·&nbsp; Junio 2026</div>
+  <span class="pg">08 / 08</span>
+</div>
+
+</div></div>
+<div id="controls">
+  <button onclick="nav(-1)">&#8592; Anterior</button>
+  <span id="slide-counter">1 / 7</span>
+  <button onclick="nav(1)">Siguiente &#8594;</button>
+</div>
+<script>
+  const slides=document.querySelectorAll('#slides-wrapper > .slide');
+  let cur=0,tot=slides.length;
+  function scale(){const w=document.getElementById('slides-wrapper');const sx=window.innerWidth/1280,sy=(window.innerHeight-64)/720;w.style.transform=`scale(${Math.min(sx,sy)*.97})`;}
+  function nav(d){slides[cur].classList.remove('active');cur=(cur+d+tot)%tot;slides[cur].classList.add('active');document.getElementById('slide-counter').textContent=`${cur+1} / ${tot}`;}
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nav(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')nav(-1);});
+  window.addEventListener('resize',scale);scale();
+</script>
+</body>
+</html>
